@@ -1,0 +1,174 @@
+.crash-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+  min-height: 100vh;
+  color: #fff;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stats-bar, .wallet-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.game-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.crash-graph {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.crash-graph::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+}
+
+.multiplier-display {
+  font-size: 5rem;
+  font-weight: 900;
+}
+
+.multiplier-display .pulse {
+  animation: pulse 0.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.multiplier-display .result {
+  display: block;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+.waiting {
+  font-size: 1.5rem;
+  color: #888;
+}
+
+.bet-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bet-controls label {
+  color: #888;
+}
+
+.bet-controls input {
+  padding: 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+}
+
+.start-btn, .cashout-btn {
+  padding: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.start-btn {
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+  color: #fff;
+}
+
+.start-btn:disabled {
+  opacity: 0.5;
+}
+
+.cashout-btn {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  color: #fff;
+  animation: pulse 1s infinite;
+}
+
+.cashout-btn .potential {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.result-banner {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 16px;
+}
+
+.result-banner.win {
+  background: rgba(46, 204, 113, 0.2);
+  border: 2px solid #2ecc71;
+}
+
+.result-banner.loss {
+  background: rgba(231, 76, 60, 0.2);
+  border: 2px solid #e74c3c;
+}
+
+.payout {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2ecc71;
+}
+
+.instructions {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.instructions h4 {
+  margin-bottom: 1rem;
+  color: #888;
+}
+
+.instructions ol {
+  padding-left: 1.5rem;
+}
+
+.instructions li {
+  margin-bottom: 0.5rem;
+}
+
+.connect-prompt {
+  text-align: center;
+  padding: 3rem;
+}

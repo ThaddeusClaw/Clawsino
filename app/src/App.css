@@ -1,0 +1,65 @@
+.casino-app {
+  min-height: 100vh;
+  background: #0a0a0f;
+}
+
+.game-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 1rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #f39c12, #e74c3c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.game-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-tabs button {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.game-tabs button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.game-tabs button.active {
+  background: linear-gradient(90deg, #f39c12, #e74c3c);
+}
+
+.game-container {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .game-nav {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+  }
+  
+  .game-tabs button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}

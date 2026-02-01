@@ -1,0 +1,297 @@
+.dice-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #fff;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin: 0;
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header p {
+  color: #888;
+  margin-top: 0.5rem;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.stat span {
+  display: block;
+  color: #888;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.stat strong {
+  font-size: 1.25rem;
+}
+
+.stat.house {
+  background: rgba(0, 210, 255, 0.1);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
+.wallet-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.wallet-button {
+  background: linear-gradient(90deg, #512da8, #673ab7) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+.game-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.prediction-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.prediction-selector button {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+  color: #fff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.prediction-selector button span {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #888;
+  margin-top: 0.5rem;
+}
+
+.prediction-selector button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.prediction-selector button.active {
+  border-color: #00d2ff;
+  background: rgba(0, 210, 255, 0.2);
+}
+
+.dice-display {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.result-number, .placeholder, .rolling {
+  font-size: 5rem;
+  font-weight: 900;
+  width: 120px;
+  height: 120px;
+  line-height: 120px;
+  margin: 0 auto;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.result-number.win {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  animation: bounce 0.5s ease;
+}
+
+.result-number.loss {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.rolling {
+  animation: shake 0.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+.bet-controls {
+  margin-bottom: 2rem;
+}
+
+.bet-controls label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #aaa;
+}
+
+.amount-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.amount-buttons button {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.amount-buttons button.active {
+  border-color: #00d2ff;
+  background: rgba(0, 210, 255, 0.2);
+}
+
+.bet-controls input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #fff;
+}
+
+.roll-button {
+  width: 100%;
+  padding: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+  border: none;
+  border-radius: 16px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.roll-button:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 10px 30px rgba(0, 210, 255, 0.3);
+}
+
+.roll-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.result-banner {
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 1.5rem;
+}
+
+.result-banner.win {
+  background: rgba(46, 204, 113, 0.2);
+  border: 2px solid #2ecc71;
+}
+
+.result-banner.loss {
+  background: rgba(231, 76, 60, 0.2);
+  border: 2px solid #e74c3c;
+}
+
+.history {
+  margin-top: 2rem;
+}
+
+.history h3 {
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.history-item.win {
+  border-left: 3px solid #2ecc71;
+}
+
+.history-item.loss {
+  border-left: 3px solid #e74c3c;
+}
+
+.roll {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.connect-prompt {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.feature {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 3rem;
+  color: #666;
+}
+
+.footer .limits {
+  font-size: 0.8rem;
+  color: #888;
+}
