@@ -1,0 +1,7 @@
+# Cloudflare Pages Build Configuration
+[build]
+command = "cd app && npm install && npm run build"
+directory = "app/dist"
+
+[build.environment]
+NODE_VERSION = "18"
