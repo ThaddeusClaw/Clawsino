@@ -13,8 +13,8 @@ import './App.css';
 // Games
 import { CoinFlip } from './components/CoinFlip';
 
-// QuickNode RPC - mainnet endpoint
-const ENDPOINT = 'https://compatible-twilight-wildflower.solana-mainnet.quiknode.pro/8a0ecb404b8669aa32876a7e5a73f49afe30ef0e/';
+// QuickNode RPC - ADD YOUR ENDPOINT HERE
+const ENDPOINT = 'https://YOUR-QUICKNODE-ENDPOINT.solana-mainnet.quiknode.pro/YOUR-KEY/';
 
 function Header() {
   const { publicKey, connected } = useWallet();
