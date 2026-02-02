@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { fetchBalanceDirect } from '../utils/balance';
+import { fetchBalanceDirect, testConnection } from '../utils/balance';
 import './CoinFlip.css';
 
 const HOUSE_WALLET = new PublicKey('8cppQjNBfuxDotmBaiseDNoLwC8TgT2Mz833ujbYUSWJ');
@@ -49,12 +49,21 @@ export const CoinFlip = () => {
     }
   }, [publicKey]);
 
-  // Fetch balance on mount and interval
+  // Debug: Test connection on mount
   useEffect(() => {
+    console.log('🎰 CoinFlip mounted');
+    console.log('🔗 Connection endpoint:', connection?.rpcEndpoint);
+    console.log('👛 Public key:', publicKey?.toBase58());
+    
+    // Test RPC connection
+    testConnection().then(result => {
+      console.log('🧪 Connection test:', result);
+    });
+    
     fetchBalance();
     const interval = setInterval(fetchBalance, 3000);
     return () => clearInterval(interval);
-  }, [fetchBalance]);
+  }, [fetchBalance, connection, publicKey]);
 
   const handleFlip = async () => {
     if (!publicKey || !sendTransaction || !connection) {
@@ -139,7 +148,12 @@ export const CoinFlip = () => {
                 {formatBalance(balance)} SOL
               </span>
               {connectionStatus === 'error' && (
-                <span className="error-text">⚠️ Connection Error</span>
+                <span className="error-text">⚠️ Connection Error - Check Console</span>
+              )}
+              {publicKey && (
+                <span className="wallet-address">
+                  {publicKey.toBase58().slice(0, 8)}...{publicKey.toBase58().slice(-8)}
+                </span>
               )}
             </div>
           </div>
