@@ -12,8 +12,8 @@ import './App.css';
 // Games
 import { CoinFlip } from './components/CoinFlip';
 
-// Helius RPC with API key
-const ENDPOINT = 'https://mainnet.helius-rpc.com/?api-key=af5e5d84-6ce2-4eb9-b096-f4754ca84ba3';
+// Devnet endpoint for testing
+const ENDPOINT = 'https://api.devnet.solana.com';
 
 function Header() {
   const { publicKey, connected } = useWallet();

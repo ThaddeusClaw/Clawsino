@@ -2,61 +2,40 @@
 /**
  * Clawsino Auto-Payout Server
  * 
- * Laedt House Wallet aus 1Password - nie im Code speichern!
+ * Lädt House Wallet aus Cloudflare Secrets (autonom, kein 1Password nötig)
  * 
  * Setup:
- * 1. Stelle sicher dass 1Password CLI installiert ist
- * 2. House Wallet muss in 1Password existieren als "Clawsino House Wallet V2"
- * 3. Starte: OP_PASSWORD=dein_passwort node payout-server.js
+ * 1. Setze HOUSE_WALLET_KEY in Cloudflare Pages Environment Variables
+ * 2. Format: Base64 encoded private key (88 characters)
+ * 3. Starte: node payout-server.js
  */
 
 import { Connection, PublicKey, Keypair, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { execSync } from 'child_process';
 import fs from 'fs';
 
 // Configuration
-const RPC_URL = process.env.SOLANA_RPC || 'https://mainnet.helius-rpc.com/?api-key=af5e5d84-6ce2-4eb9-b096-f4754ca84ba3';
-const OP_ITEM_NAME = 'Clawsino House Wallet V2';
+const RPC_URL = process.env.SOLANA_RPC || 'https://mainnet.helius-rpc.com/?api-key=YOUR_KEY';
+const HOUSE_WALLET_KEY = process.env.HOUSE_WALLET_KEY;
 const MIN_BET = 0.001;
 const MAX_BET = 0.1;
 
-// Load house wallet from 1Password
+// Load house wallet from environment
 function loadHouseWallet() {
+  if (!HOUSE_WALLET_KEY) {
+    console.error('❌ HOUSE_WALLET_KEY environment variable not set');
+    console.log('Set it in Cloudflare Pages dashboard → Environment Variables');
+    process.exit(1);
+  }
+  
   try {
-    // Get from 1Password
-    const opPassword = process.env.OP_PASSWORD;
-    if (!opPassword) {
-      throw new Error('OP_PASSWORD environment variable required');
-    }
-    
-    // Sign in to 1Password
-    const sessionToken = execSync(`echo "${opPassword}" | op signin --account thaddeus --raw`, { encoding: 'utf8' }).trim();
-    
-    // Get public key
-    const publicKey = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field username`, { encoding: 'utf8' }).trim();
-    
-    // Get secret key (password field) - Base58 encoded
-    const secretKeyBase58 = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
-    
-    // Decode Base58 to bytes
-    const bs58 = require('bs58');
-    const secretKey = bs58.decode(secretKeyBase58);
-    
+    // Decode Base64 private key
+    const secretKey = Buffer.from(HOUSE_WALLET_KEY, 'base64');
     const keypair = Keypair.fromSecretKey(secretKey);
     
-    // Verify
-    if (keypair.publicKey.toBase58() !== publicKey) {
-      throw new Error('Public key mismatch');
-    }
-    
-    console.log('✅ House wallet loaded from 1Password:', publicKey);
+    console.log('✅ House wallet loaded:', keypair.publicKey.toBase58());
     return keypair;
   } catch (err) {
-    console.error('❌ Failed to load house wallet from 1Password:', err.message);
-    console.log('\nMake sure:');
-    console.log('1. 1Password CLI is installed: brew install 1password-cli');
-    console.log('2. OP_PASSWORD environment variable is set');
-    console.log(`3. Item "${OP_ITEM_NAME}" exists in 1Password`);
+    console.error('❌ Failed to load house wallet:', err.message);
     process.exit(1);
   }
 }
@@ -193,7 +172,7 @@ async function monitorHouseWallet() {
 async function main() {
   console.log('🦞 Clawsino Auto-Payout Server');
   console.log('================================\n');
-  console.log('🔐 Loading wallet from 1Password...\n');
+  console.log('🔐 Loading wallet from Cloudflare Secrets...\n');
   
   const balance = await connection.getBalance(houseKeypair.publicKey);
   console.log(`House balance: ${balance / LAMPORTS_PER_SOL} SOL`);
