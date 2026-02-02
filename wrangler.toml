@@ -1,7 +1,16 @@
-# Cloudflare Pages Build Configuration
-[build]
-command = "cd app && npm install && npm run build"
-directory = "app/dist"
+name = "clawsino-payout"
+main = "worker.js"
+compatibility_date = "2024-01-01"
 
-[build.environment]
-NODE_VERSION = "18"
+# Scheduled job - runs every minute
+[[triggers]]
+crons = ["* * * * *"]
+
+[vars]
+# Public variables (not secrets)
+MIN_BET = "0.001"
+MAX_BET = "0.1"
+
+# Secrets (set via wrangler secret put)
+# HELIUS_API_KEY = ""
+# HOUSE_WALLET_KEY = ""
