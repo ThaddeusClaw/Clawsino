@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Balance Test</title>
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: monospace; padding: 20px; }
+        .log { margin: 5px 0; padding: 10px; background: #1a1a2e; border-left: 3px solid #00ff88; }
+        .error { border-color: #ff0040; color: #ff0040; }
+        .success { border-color: #00ff88; color: #00ff88; }
+        input { background: #1a1a2e; border: 2px solid #ff0040; color: #fff; padding: 10px; font-family: monospace; width: 400px; }
+        button { background: #ff0040; border: none; color: #fff; padding: 10px 20px; font-family: monospace; cursor: pointer; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🦞 Balance Test</h1>
+    <p>Enter your Solana wallet address:</p>
+    <input type="text" id="address" placeholder="8cppQjNBfuxDotmBaiseDNoLwC8TgT2Mz833ujbYUSWJ" value="8cppQjNBfuxDotmBaiseDNoLwC8TgT2Mz833ujbYUSWJ">
+    <button onclick="checkBalance()">Check Balance</button>
+    <div id="logs"></div>
+
+    <script>
+        const logs = document.getElementById('logs');
+        
+        function log(msg, isError = false) {
+            const div = document.createElement('div');
+            div.className = 'log ' + (isError ? 'error' : 'success');
+            div.textContent = new Date().toLocaleTimeString() + ' - ' + msg;
+            logs.appendChild(div);
+        }
+
+        async function checkBalance() {
+            const address = document.getElementById('address').value;
+            logs.innerHTML = '';
+            
+            log('🔍 Checking balance for: ' + address);
+            
+            const rpcs = [
+                'https://api.mainnet-beta.solana.com',
+                'https://solana-api.projectserum.com',
+                'https://rpc.ankr.com/solana'
+            ];
+            
+            for (const rpc of rpcs) {
+                try {
+                    log('🌐 Trying: ' + rpc);
+                    
+                    const response = await fetch(rpc, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            id: 1,
+                            method: 'getBalance',
+                            params: [address]
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        log('❌ HTTP ' + response.status, true);
+                        continue;
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        log('❌ RPC Error: ' + JSON.stringify(data.error), true);
+                        continue;
+                    }
+                    
+                    const lamports = data.result?.value;
+                    const sol = lamports / 1e9;
+                    
+                    log('✅ SUCCESS! Balance: ' + sol + ' SOL');
+                    return;
+                    
+                } catch (err) {
+                    log('❌ Error: ' + err.message, true);
+                }
+            }
+            
+            log('❌ All RPC endpoints failed', true);
+        }
+        
+        // Auto-check on load
+        checkBalance();
+    </script>
+</body>
+</html>
