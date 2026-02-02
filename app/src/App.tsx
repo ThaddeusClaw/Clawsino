@@ -13,8 +13,8 @@ import './App.css';
 // Games
 import { CoinFlip } from './components/CoinFlip';
 
-// Public Mainnet RPC
-const ENDPOINT = 'https://api.mainnet-beta.solana.com';
+// Public Mainnet RPC - Project Serum allows browser requests
+const ENDPOINT = 'https://solana-api.projectserum.com';
 
 function Header() {
   const { publicKey, connected } = useWallet();
