@@ -7,6 +7,7 @@ import { DiceRoll } from './components/DiceRoll';
 import { Roulette } from './components/Roulette';
 import { Crash } from './components/Crash';
 import { Slots } from './components/Slots';
+import { SimpleBalance } from './components/SimpleBalance';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import './App.css';
 
@@ -80,6 +81,7 @@ function App() {
                 </div>
               </div>
               <div className="header-stats">
+                <SimpleBalance />
                 <div className="stat-pill">
                   <span className="stat-label">NETWORK</span>
                   <span className="stat-value mainnet">MAINNET</span>

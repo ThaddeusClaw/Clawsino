@@ -275,6 +275,39 @@
   letter-spacing: 1px;
 }
 
+/* Simple Balance Component */
+.simple-balance {
+  background: var(--retro-black);
+  border: 3px solid var(--retro-green);
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 
+    4px 4px 0 rgba(0, 255, 136, 0.3),
+    inset 0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+.balance-label {
+  font-size: 10px;
+  color: var(--retro-gray-light);
+  letter-spacing: 2px;
+}
+
+.balance-value {
+  font-size: 24px;
+  color: var(--retro-green);
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+  font-family: 'Courier New', monospace;
+}
+
+.wallet-addr {
+  font-size: 10px;
+  color: var(--retro-gray-light);
+  margin-top: 5px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .retro-header {
