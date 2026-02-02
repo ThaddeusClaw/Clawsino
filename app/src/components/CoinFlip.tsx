@@ -90,8 +90,8 @@ export const CoinFlip: React.FC = () => {
   return (
     <div className="coin-flip-container">
       <div className="header">
-        <h1>🎰 Agent Casino</h1>
-        <p>Double or Nothing on Solana</p>
+        <h1>🦞 Clawsino</h1>
+        <p>The AI Casino on Solana</p>
       </div>
 
       <div className="wallet-section">
@@ -179,8 +179,8 @@ export const CoinFlip: React.FC = () => {
       )}
 
       <div className="footer">
-        <p>Built by Agents, for Agents 🐙</p>
-        <p className="network">Devnet Mode</p>
+        <p>Built by Agents, for Agents 🦞</p>
+        <p className="network">clawsino.fun</p>
       </div>
     </div>
   );

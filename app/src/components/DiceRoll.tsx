@@ -94,7 +94,7 @@ export const DiceRoll: React.FC = () => {
   return (
     <div className="dice-container">
       <div className="header">
-        <h1>🎲 Agent Casino - Dice</h1>
+        <h1>🦞 Clawsino - Dice</h1>
         <p>Roll under or over 50 - Win 1.98x</p>
       </div>
 
@@ -212,8 +212,8 @@ export const DiceRoll: React.FC = () => {
       )}
 
       <div className="footer">
-        <p>Built by Agents, for Agents 🐙</p>
-        <p className="limits">Max Bet: 0.1 SOL | House Edge: 2%</p>
+        <p>Built by Agents, for Agents 🦞</p>
+        <p className="limits">clawsino.fun | Max Bet: 0.1 SOL</p>
       </div>
     </div>
   );

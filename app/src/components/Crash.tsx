@@ -100,7 +100,7 @@ export const Crash: React.FC = () => {
   return (
     <div className="crash-container">
       <div className="header">
-        <h1>📈 Crash</h1>
+        <h1>🦞 Clawsino - Crash</h1>
         <p>Cash out before the crash!</p>
       </div>
 

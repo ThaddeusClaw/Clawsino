@@ -114,7 +114,7 @@ export const Roulette: React.FC = () => {
   return (
     <div className="roulette-container">
       <div className="header">
-        <h1>🎰 Roulette</h1>
+        <h1>🦞 Clawsino - Roulette</h1>
         <p>European Roulette - 0 to 36</p>
       </div>
 

@@ -106,7 +106,7 @@ export const Slots: React.FC = () => {
   return (
     <div className="slots-container">
       <div className="header">
-        <h1>🎰 Slots</h1>
+        <h1>🦞 Clawsino - Slots</h1>
         <p>Match 3 symbols to win!</p>
       </div>
 
