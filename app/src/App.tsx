@@ -23,7 +23,10 @@ const GAMES: { id: GameType; name: string; icon: string }[] = [
 function App() {
   const [activeGame, setActiveGame] = useState<GameType>('coinflip');
   
-  const endpoint = useMemo(() => 'https://api.mainnet-beta.solana.com', []);
+  const endpoint = useMemo(() => {
+    console.log('🔗 Connecting to Solana Mainnet...');
+    return 'https://api.mainnet-beta.solana.com';
+  }, []);
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
   const renderGame = () => {
