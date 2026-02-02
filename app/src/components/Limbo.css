@@ -1,0 +1,126 @@
+@import './GameStyles.css';
+
+.limbo-game {
+  text-align: center;
+}
+
+.limbo-display {
+  width: 200px;
+  height: 200px;
+  background: #0a0a0f;
+  border: 4px solid #ff0040;
+  border-radius: 50%;
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+}
+
+.limbo-display.rolling {
+  border-color: #ffaa00;
+  animation: glow 0.5s infinite alternate;
+}
+
+.limbo-display.win {
+  border-color: #00ff88;
+  background: #00ff8810;
+}
+
+.limbo-display.loss {
+  border-color: #ff0040;
+  background: #ff004010;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px #ffaa00; }
+  to { box-shadow: 0 0 40px #ffaa00; }
+}
+
+.rolling-number {
+  animation: numberBlur 0.1s infinite;
+}
+
+@keyframes numberBlur {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.result-number {
+  font-size: 48px;
+}
+
+.result-number.win {
+  color: #00ff88;
+}
+
+.result-number.loss {
+  color: #ff0040;
+}
+
+.target-section {
+  margin: 20px 0;
+}
+
+.target-section label {
+  display: block;
+  color: #ff0040;
+  margin-bottom: 10px;
+}
+
+.target-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.target-buttons button {
+  padding: 10px 15px;
+  font-size: 14px;
+}
+
+.target-buttons button.active {
+  background: #00ff88;
+  color: #0a0a0f;
+}
+
+.target-section input[type="range"] {
+  width: 100%;
+  max-width: 300px;
+  margin: 10px 0;
+}
+
+.target-value {
+  font-size: 24px;
+  color: #ff0040;
+  font-weight: bold;
+}
+
+.probability-display {
+  background: #1a0a0f;
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid #ff004040;
+  font-size: 14px;
+  color: #888;
+}
+
+.limbo-result {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.limbo-result.win {
+  background: #00ff8810;
+  border: 2px solid #00ff88;
+}
+
+.limbo-result.loss {
+  background: #ff004010;
+  border: 2px solid #ff0040;
+}

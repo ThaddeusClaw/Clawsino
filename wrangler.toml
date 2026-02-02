@@ -4,13 +4,13 @@ compatibility_date = "2024-01-01"
 
 # Scheduled job - runs every minute
 [[triggers]]
-crons = ["* * * * *"]
+crons = ["*/5 * * * *"]
 
 [vars]
 # Public variables (not secrets)
 MIN_BET = "0.001"
 MAX_BET = "0.1"
 
-# Secrets (set via wrangler secret put)
+# Secrets (set via wrangler secret put or Cloudflare dashboard)
 # HELIUS_API_KEY = ""
 # HOUSE_WALLET_KEY = ""
