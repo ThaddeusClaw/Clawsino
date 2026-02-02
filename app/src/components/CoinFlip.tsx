@@ -114,17 +114,46 @@ export function CoinFlip() {
       
       console.log('Transaction info:', txInfo);
       
+      // Check if transaction succeeded
+      if (txInfo?.meta?.err) {
+        console.error('Transaction failed:', txInfo.meta.err);
+        setError('Transaction failed: ' + JSON.stringify(txInfo.meta.err));
+        setFlipping(false);
+        return;
+      }
+      
       // Parse logs to determine win/loss
       let isWin = false;
+      let foundResult = false;
+      console.log('Transaction logs:', txInfo?.meta?.logMessages);
+      
       if (txInfo?.meta?.logMessages) {
         for (const log of txInfo.meta.logMessages) {
+          console.log('Log:', log);
           if (log.includes('WIN')) {
             isWin = true;
+            foundResult = true;
             break;
           } else if (log.includes('LOSS')) {
             isWin = false;
+            foundResult = true;
             break;
           }
+        }
+      }
+      
+      // Check if pre/post balances show a change
+      const preBalance = txInfo?.meta?.preBalances?.[0] || 0;
+      const postBalance = txInfo?.meta?.postBalances?.[0] || 0;
+      console.log('Pre-balance:', preBalance, 'Post-balance:', postBalance);
+      
+      // If we didn't find a log message, check balance change
+      if (!foundResult) {
+        // If post > pre + bet, they won (got 2x back)
+        const balanceChange = (postBalance - preBalance) / LAMPORTS_PER_SOL;
+        console.log('Balance change:', balanceChange);
+        if (balanceChange > bet * 0.5) { // They got money back
+          isWin = true;
         }
       }
 
