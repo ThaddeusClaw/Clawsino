@@ -23,7 +23,7 @@ pub mod casino {
     }
 
     /// Play with optional referral
-    /// If referrer is provided, they earn 5% of house profit
+    /// Tiered rewards: 5% (1-25), 6% (25-100), 7% (100+) of house profit
     pub fn play_with_referral(
         ctx: Context<PlayWithReferral>, 
         amount: u64,
@@ -52,18 +52,20 @@ pub mod casino {
             **player.to_account_info().try_borrow_mut_lamports()? += payout;
             house_account.total_profit -= amount as i64;
         } else {
-            // House wins - calculate referral share!
+            // House wins - calculate referral share with TIER SYSTEM!
             let house_profit = amount;
             
-            // 5% of house profit goes to referrer (if exists)
+            // Tiered referral rates based on referred player count
             if let Some(referrer_account) = &mut ctx.accounts.referrer_account {
+                let tier_rate = get_tier_rate(referrer_account.referred_players);
+                
                 let referral_share = (house_profit as u128)
-                    .checked_mul(house_account.referral_share_bps as u128)
+                    .checked_mul(tier_rate as u128)
                     .unwrap()
                     .checked_div(10000)
                     .unwrap() as u64;
                 
-                // Track referral earnings (paid out on claim)
+                // Track referral earnings (paid out weekly on Sundays 3pm UTC)
                 referrer_account.pending_rewards += referral_share;
                 referrer_account.total_earned += referral_share;
                 referrer_account.referred_players += 1;
@@ -138,6 +140,18 @@ pub mod casino {
             referred_players: referrer.referred_players,
             total_volume: referrer.total_volume,
         })
+    }
+}
+
+/// Tiered referral rates
+/// Bronze: 1-25 players = 5%
+/// Silver: 25-100 players = 6%  
+/// Gold: 100+ players = 7%
+fn get_tier_rate(referred_count: u64) -> u64 {
+    match referred_count {
+        0..=25 => 500,      // 5% - Bronze
+        26..=100 => 600,    // 6% - Silver
+        _ => 700,           // 7% - Gold
     }
 }
 
