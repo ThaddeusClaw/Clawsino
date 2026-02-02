@@ -13,8 +13,8 @@ import './App.css';
 // Games
 import { CoinFlip } from './components/CoinFlip';
 
-// Get RPC endpoint from env var (Vite exposes env vars with VITE_ prefix)
-const ENDPOINT = import.meta.env.VITE_SOLANA_RPC || 'https://api.mainnet-beta.solana.com';
+// QuickNode RPC - mainnet endpoint
+const ENDPOINT = 'https://mainnet.helius-rpc.com/?api-key=af5e5d84-6ce2-4eb9-b096-f4754ca84ba3';
 
 function Header() {
   const { publicKey, connected } = useWallet();
