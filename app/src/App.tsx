@@ -13,8 +13,8 @@ import './App.css';
 // Games
 import { CoinFlip } from './components/CoinFlip';
 
-// Helius RPC - API key removed after deployment
-const ENDPOINT = 'https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY';
+// QuickNode RPC - mainnet endpoint
+const ENDPOINT = 'https://compatible-twilight-wildflower.solana-mainnet.quiknode.pro/8a0ecb404b8669aa32876a7e5a73f49afe30ef0e/';
 
 function Header() {
   const { publicKey, connected } = useWallet();
