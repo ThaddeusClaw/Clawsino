@@ -13,8 +13,8 @@ import './App.css';
 // Games
 import { CoinFlip } from './components/CoinFlip';
 
-// Helius RPC with API key from 1Password
-const ENDPOINT = 'https://mainnet.helius-rpc.com/?api-key=417f6f25-e54f-4d2b-abda-556d8d740a00';
+// Helius RPC - API key removed after deployment
+const ENDPOINT = 'https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY';
 
 function Header() {
   const { publicKey, connected } = useWallet();
