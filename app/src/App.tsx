@@ -13,8 +13,8 @@ import './App.css';
 // Games
 import { CoinFlip } from './components/CoinFlip';
 
-// Helius RPC with API key (browser-friendly)
-const ENDPOINT = 'https://mainnet.helius-rpc.com/?api-key=549a6625-b458-4fd9-9145-a23265761d86';
+// Helius RPC - ADD YOUR API KEY HERE
+const ENDPOINT = 'https://mainnet.helius-rpc.com/?api-key=YOUR_HELIUS_API_KEY';
 
 function Header() {
   const { publicKey, connected } = useWallet();
