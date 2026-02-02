@@ -35,9 +35,9 @@ function loadHouseWallet() {
     // Get public key
     const publicKey = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field username`, { encoding: 'utf8' }).trim();
     
-    // Get secret key (password field)
-    const secretKeyJson = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
-    const secretKey = JSON.parse(secretKeyJson);
+    // Get secret key (password field) - comma-separated string
+    const secretKeyString = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
+    const secretKey = secretKeyString.split(',').map(n => parseInt(n.trim()));
     
     const keypair = Keypair.fromSecretKey(new Uint8Array(secretKey));
     

@@ -28,8 +28,8 @@ function loadHouseWallet() {
     }
     
     const sessionToken = execSync(`echo "${opPassword}" | op signin --account thaddeus --raw`, { encoding: 'utf8' }).trim();
-    const secretKeyJson = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
-    const secretKey = JSON.parse(secretKeyJson);
+    const secretKeyString = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
+    const secretKey = secretKeyString.split(',').map(n => parseInt(n.trim()));
     
     return Keypair.fromSecretKey(new Uint8Array(secretKey));
   } catch (err) {
