@@ -7,6 +7,7 @@ import { DiceRoll } from './components/DiceRoll';
 import { Roulette } from './components/Roulette';
 import { Crash } from './components/Crash';
 import { Slots } from './components/Slots';
+import { ConnectionDebug } from './components/ConnectionDebug';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import './App.css';
 
@@ -52,6 +53,7 @@ function App() {
     <ConnectionProvider endpoint={endpoint} config={connectionConfig}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
+          <ConnectionDebug />
           <div className="casino-app">
             <nav className="game-nav">
               <div className="logo">🎰 Agent Casino</div>
