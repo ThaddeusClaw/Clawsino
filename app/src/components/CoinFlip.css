@@ -235,10 +235,263 @@
   font-size: 20px;
 }
 
+/* Agent Onboarding Styles */
+.agent-onboarding {
+  max-width: 600px;
+}
+
+.subtitle {
+  color: var(--gray-light);
+  font-size: 14px;
+  letter-spacing: 3px;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+}
+
+/* User Type Toggle */
+.user-type-toggle {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.user-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 30px;
+  background: var(--black);
+  border: 3px solid var(--gray);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 140px;
+}
+
+.user-type-btn:hover {
+  border-color: var(--red);
+}
+
+.user-type-btn.agent-active {
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 0 20px rgba(255, 0, 64, 0.4);
+}
+
+.user-type-btn .icon {
+  font-size: 32px;
+}
+
+/* Agent Card */
+.agent-card {
+  background: var(--black);
+  border: 3px solid var(--gray);
+  padding: 30px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.agent-card h3 {
+  color: var(--red);
+  font-size: 18px;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.command-block {
+  background: #0a0a0f;
+  border: 2px solid #333;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-family: 'Courier New', monospace;
+}
+
+.command-block code {
+  color: var(--green);
+  font-size: 14px;
+}
+
+.copy-btn {
+  background: var(--gray);
+  border: none;
+  color: #fff;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.agent-steps {
+  color: var(--gray-light);
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.agent-steps li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.docs-link {
+  color: var(--red);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.docs-link:hover {
+  text-decoration: underline;
+}
+
+/* Beta Warning */
+.beta-warning {
+  background: rgba(255, 170, 0, 0.1);
+  border: 2px solid #ffaa00;
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+  text-align: left;
+}
+
+.beta-icon {
+  font-size: 24px;
+}
+
+.beta-warning strong {
+  color: #ffaa00;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.beta-warning p {
+  color: var(--gray-light);
+  font-size: 12px;
+  margin: 3px 0;
+}
+
+/* Human Card */
+.human-card {
+  padding: 40px;
+  text-align: center;
+}
+
+.big-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.human-card h3 {
+  color: var(--red);
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.switch-btn {
+  background: var(--red);
+  border: 3px solid var(--red-dark);
+  color: #fff;
+  padding: 15px 30px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.switch-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Agent Connect Box */
+.agent-connect-box {
+  padding: 40px;
+}
+
+.wallet-info {
+  margin: 20px 0;
+}
+
+.wallet-info code {
+  display: block;
+  background: #0a0a0f;
+  padding: 10px;
+  margin: 5px 0;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--green);
+}
+
+/* Agent Header */
+.agent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--gray);
+}
+
+.agent-badge {
+  background: var(--red);
+  color: #fff;
+  padding: 5px 15px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.back-btn {
+  background: transparent;
+  border: 2px solid var(--gray);
+  color: #fff;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.wallet-addr {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--gray-light);
+}
+
+/* Info Section */
+.info-section {
+  text-align: left;
+  padding: 30px;
+}
+
+.info-section h4 {
+  color: var(--red);
+  margin-bottom: 15px;
+}
+
+.info-section ol {
+  color: var(--gray-light);
+  padding-left: 20px;
+}
+
+.info-section li {
+  margin-bottom: 10px;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .game-panel {
     padding: 20px;
+  }
+  
+  .user-type-toggle {
+    flex-direction: column;
+    align-items: center;
   }
   
   .flip-btn {
