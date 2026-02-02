@@ -26,12 +26,19 @@ export const CoinFlip: React.FC = () => {
   const [flipHistory, setFlipHistory] = useState<Array<{ win: boolean; amount: number; time: Date }>>([]);
 
   const fetchBalance = useCallback(async () => {
-    if (!publicKey) return;
+    if (!publicKey) {
+      console.log('⚠️ No public key available');
+      return;
+    }
     try {
+      console.log('🔍 Fetching balance for:', publicKey.toBase58());
+      console.log('🔗 Using connection:', connection.rpcEndpoint);
       const bal = await connection.getBalance(publicKey);
+      console.log('✅ Balance fetched:', bal / 1e9, 'SOL');
       setBalance(bal / 1e9);
     } catch (err) {
-      console.error('Failed to fetch balance:', err);
+      console.error('❌ Failed to fetch balance:', err);
+      setBalance(0);
     }
   }, [connection, publicKey]);
 

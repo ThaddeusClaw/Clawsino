@@ -24,10 +24,18 @@ function App() {
   const [activeGame, setActiveGame] = useState<GameType>('coinflip');
   
   const endpoint = useMemo(() => {
-    console.log('🔗 Connecting to Solana Mainnet...');
-    return 'https://api.mainnet-beta.solana.com';
+    const rpcUrl = 'https://api.mainnet-beta.solana.com';
+    console.log('🔗 Connecting to Solana Mainnet:', rpcUrl);
+    return rpcUrl;
   }, []);
-  const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
+  
+  const wallets = useMemo(() => [
+    new PhantomWalletAdapter(),
+  ], []);
+  
+  const connectionConfig = useMemo(() => ({
+    commitment: 'confirmed' as const,
+  }), []);
 
   const renderGame = () => {
     switch (activeGame) {
@@ -41,7 +49,7 @@ function App() {
   };
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider endpoint={endpoint} config={connectionConfig}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <div className="casino-app">
