@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { CoinFlip } from './components/CoinFlip';
 import { DiceRoll } from './components/DiceRoll';
 import { Roulette } from './components/Roulette';
@@ -81,6 +81,7 @@ function App() {
                 </div>
               </div>
               <div className="header-stats">
+                <WalletMultiButton />
                 <div className="stat-pill">
                   <span className="stat-label">NETWORK</span>
                   <span className="stat-value mainnet">MAINNET</span>
