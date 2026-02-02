@@ -12,32 +12,23 @@ import './App.css';
 
 // Games
 import { CoinFlip } from './components/CoinFlip';
-import { DiceRoll } from './components/DiceRoll';
-import { Roulette } from './components/Roulette';
-import { Crash } from './components/Crash';
-import { Slots } from './components/Slots';
 
-type GameType = 'coinflip' | 'dice' | 'roulette' | 'crash' | 'slots';
-
-const GAMES: { id: GameType; name: string; icon: string }[] = [
-  { id: 'coinflip', name: 'COIN FLIP', icon: '🪙' },
-  { id: 'dice', name: 'DICE', icon: '🎲' },
-  { id: 'roulette', name: 'ROULETTE', icon: '🎰' },
-  { id: 'crash', name: 'CRASH', icon: '📈' },
-  { id: 'slots', name: 'SLOTS', icon: '7️⃣' },
-];
-
-// Use mainnet with fallback
+// Public Mainnet RPC
 const ENDPOINT = 'https://api.mainnet-beta.solana.com';
 
-// Header Component with Wallet
 function Header() {
   const { publicKey, connected } = useWallet();
   const { connection } = useConnection();
   const [balance, setBalance] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('🔄 Header mounted');
+    console.log('🔗 Connected:', connected);
+    console.log('👛 PublicKey:', publicKey?.toBase58());
+    console.log('🌐 Connection:', connection?.rpcEndpoint);
+
     if (!connected || !publicKey || !connection) {
       setBalance(0);
       return;
@@ -45,25 +36,30 @@ function Header() {
 
     let isActive = true;
     setIsLoading(true);
+    setError(null);
 
     const fetchBalance = async () => {
       try {
+        console.log('🔍 Fetching balance for:', publicKey.toBase58());
         const lamports = await connection.getBalance(publicKey, 'confirmed');
+        console.log('✅ Lamports received:', lamports);
+        
         if (isActive) {
           setBalance(lamports / 1e9);
           setIsLoading(false);
         }
-      } catch (err) {
-        console.error('Balance error:', err);
+      } catch (err: any) {
+        console.error('❌ Balance error:', err);
         if (isActive) {
           setBalance(0);
           setIsLoading(false);
+          setError(err.message || 'Failed to fetch');
         }
       }
     };
 
     fetchBalance();
-    const interval = setInterval(fetchBalance, 3000);
+    const interval = setInterval(fetchBalance, 5000);
 
     return () => {
       isActive = false;
@@ -83,90 +79,68 @@ function Header() {
       
       <div className="header-right">
         {connected && publicKey && (
-          <div className="balance-display">
-            <div className="balance-box">
-              <span className="balance-label">BALANCE</span>
-              <span className="balance-amount">
-                {isLoading ? '...' : `${balance.toFixed(4)} SOL`}
-              </span>
-              <span className="wallet-address">
-                {publicKey.toBase58().slice(0, 4)}...{publicKey.toBase58().slice(-4)}
-              </span>
-            </div>
+          <div className="balance-box">
+            <span className="balance-label">BALANCE</span>
+            <span className="balance-amount">
+              {isLoading ? '...' : `${balance.toFixed(4)} SOL`}
+            </span>
+            {error && <span className="error-text">⚠️ {error}</span>}
+            <span className="wallet-address">
+              {publicKey.toBase58().slice(0, 4)}...{publicKey.toBase58().slice(-4)}
+            </span>
           </div>
         )}
         
         <WalletMultiButton className="wallet-btn" />
         
-        <div className="network-pill">
-          <span className="network-dot"></span>
-          MAINNET
-        </div>
+        <div className="network-badge">MAINNET</div>
       </div>
     </header>
   );
 }
 
-// Navigation
-function GameNav({ activeGame, onSelect }: { activeGame: GameType; onSelect: (g: GameType) => void }) {
-  return (
-    <nav className="retro-nav">
-      {GAMES.map((game) => (
-        <button
-          key={game.id}
-          className={`pixel-btn ${activeGame === game.id ? 'active' : ''}`}
-          onClick={() => onSelect(game.id)}
-        >
-          <span className="btn-icon">{game.icon}</span>
-          <span className="btn-text">{game.name}</span>
-        </button>
-      ))}
-    </nav>
-  );
-}
+function GamePanel() {
+  const { connected } = useWallet();
 
-// Game Router
-function GameContent({ game }: { game: GameType }) {
-  switch (game) {
-    case 'coinflip': return <CoinFlip />;
-    case 'dice': return <DiceRoll />;
-    case 'roulette': return <Roulette />;
-    case 'crash': return <Crash />;
-    case 'slots': return <Slots />;
-    default: return <CoinFlip />;
+  if (!connected) {
+    return (
+      <div className="game-panel">
+        <h2>🪙 COIN FLIP</h2>
+        <p>50/50 • Double or Nothing</p>
+        <div className="connect-box">
+          <span className="pixel-icon">👾</span>
+          <h3>CONNECT WALLET TO PLAY</h3>
+          <p>Click "Select Wallet" in the header</p>
+        </div>
+      </div>
+    );
   }
+
+  return <CoinFlip />;
 }
 
-// Footer
 function Footer() {
   return (
     <footer className="retro-footer">
-      <div className="footer-content">
-        <span className="footer-logo">🦞 CLAWSINO</span>
-        <span className="footer-text">BUILT BY AGENTS FOR AGENTS</span>
-        <span className="footer-version">v2.1 MAINNET</span>
-      </div>
+      <span>🦞 CLAWSINO</span>
+      <span>BUILT BY AGENTS FOR AGENTS</span>
+      <span>v3.0 MAINNET</span>
     </footer>
   );
 }
 
-// Main App Content
 function AppContent() {
-  const [activeGame, setActiveGame] = useState<GameType>('coinflip');
-
   return (
     <div className="casino-app">
       <Header />
-      <GameNav activeGame={activeGame} onSelect={setActiveGame} />
       <main className="game-container">
-        <GameContent game={activeGame} />
+        <GamePanel />
       </main>
       <Footer />
     </div>
   );
 }
 
-// Root App with Providers
 function App() {
   const wallets = useMemo(() => [
     new PhantomWalletAdapter(),
