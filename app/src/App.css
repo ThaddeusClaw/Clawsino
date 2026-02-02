@@ -308,12 +308,105 @@
   margin-top: 5px;
 }
 
+/* Wallet Info Component */
+.wallet-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.wallet-info.connected {
+  flex-direction: row;
+}
+
+.balance-box {
+  background: var(--retro-black);
+  border: 3px solid var(--retro-green);
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 
+    4px 4px 0 rgba(0, 255, 136, 0.3),
+    inset 0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+.balance-label {
+  font-size: 10px;
+  color: var(--retro-gray-light);
+  letter-spacing: 2px;
+}
+
+.balance-value {
+  font-size: 20px;
+  color: var(--retro-green);
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+  font-family: 'Courier New', monospace;
+}
+
+.wallet-addr {
+  font-size: 10px;
+  color: var(--retro-gray-light);
+  margin-top: 5px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.network-badge {
+  background: var(--retro-black);
+  border: 2px solid var(--retro-green);
+  color: var(--retro-green);
+  padding: 8px 15px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--retro-green);
+}
+
+/* Wallet Button Override */
+.retro-wallet-btn {
+  background: var(--retro-red) !important;
+  border: 3px solid var(--retro-red-dark) !important;
+  color: #fff !important;
+  font-family: 'Courier New', monospace !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  letter-spacing: 2px !important;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5) !important;
+  transition: all 0.15s !important;
+}
+
+.retro-wallet-btn:hover {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5) !important;
+  background: var(--retro-red-light) !important;
+}
+
+.retro-wallet-btn.small {
+  padding: 8px 15px !important;
+  font-size: 12px !important;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .retro-header {
     flex-direction: column;
     gap: 15px;
     text-align: center;
+  }
+  
+  .header-right {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .wallet-info.connected {
+    flex-direction: column;
   }
   
   .logo-text h1 {
