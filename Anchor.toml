@@ -18,7 +18,7 @@ coin_flip = "2Gj7tzsJUtgsMAQ6kEUzCtyy7t6X2Byy5UPcrSxKCwVG"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "mainnet"
+cluster = "devnet"
 wallet = "~/.config/solana/devnet.json"
 
 [scripts]

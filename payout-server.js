@@ -35,11 +35,14 @@ function loadHouseWallet() {
     // Get public key
     const publicKey = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field username`, { encoding: 'utf8' }).trim();
     
-    // Get secret key (password field) - comma-separated string
-    const secretKeyString = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
-    const secretKey = secretKeyString.split(',').map(n => parseInt(n.trim()));
+    // Get secret key (password field) - Base58 encoded
+    const secretKeyBase58 = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
     
-    const keypair = Keypair.fromSecretKey(new Uint8Array(secretKey));
+    // Decode Base58 to bytes
+    const bs58 = require('bs58');
+    const secretKey = bs58.decode(secretKeyBase58);
+    
+    const keypair = Keypair.fromSecretKey(secretKey);
     
     // Verify
     if (keypair.publicKey.toBase58() !== publicKey) {

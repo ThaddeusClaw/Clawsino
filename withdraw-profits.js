@@ -28,10 +28,13 @@ function loadHouseWallet() {
     }
     
     const sessionToken = execSync(`echo "${opPassword}" | op signin --account thaddeus --raw`, { encoding: 'utf8' }).trim();
-    const secretKeyString = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
-    const secretKey = secretKeyString.split(',').map(n => parseInt(n.trim()));
+    const secretKeyBase58 = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
     
-    return Keypair.fromSecretKey(new Uint8Array(secretKey));
+    // Decode Base58 to bytes
+    const bs58 = require('bs58');
+    const secretKey = bs58.decode(secretKeyBase58);
+    
+    return Keypair.fromSecretKey(secretKey);
   } catch (err) {
     console.error('❌ Failed to load from 1Password:', err.message);
     process.exit(1);
