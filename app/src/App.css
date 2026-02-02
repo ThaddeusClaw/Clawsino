@@ -1,75 +1,63 @@
-/* Retro 90s Pixel Art Casino Theme */
+/* ========================================
+   CLAWSINO - 90s Retro Pixel Theme
+   ======================================== */
+
 :root {
-  --retro-black: #0a0a0f;
-  --retro-dark: #1a0a0f;
-  --retro-red: #ff0040;
-  --retro-red-dark: #cc0033;
-  --retro-red-light: #ff3366;
-  --retro-gold: #ffd700;
-  --retro-green: #00ff88;
-  --retro-gray: #333;
-  --retro-gray-light: #666;
-  --pixel-border: 4px;
+  --black: #0a0a0f;
+  --dark: #1a0a0f;
+  --red: #ff0040;
+  --red-dark: #cc0033;
+  --red-light: #ff3366;
+  --green: #00ff88;
+  --gold: #ffd700;
+  --gray: #333;
+  --gray-light: #666;
 }
 
-/* Global App Styles */
-.casino-app.retro-theme {
-  min-height: 100vh;
-  background: var(--retro-black);
-  background-image: 
-    linear-gradient(45deg, rgba(255,0,64,0.05) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255,0,64,0.05) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(255,0,64,0.05) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(255,0,64,0.05) 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-  color: #fff;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: 'Courier New', monospace;
-  image-rendering: pixelated;
-}
-
-/* Loading Screen */
-.loading-screen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: var(--black);
+  color: #fff;
   min-height: 100vh;
-  background: var(--retro-black);
 }
 
-.pixel-loader {
-  text-align: center;
-  animation: pulse 1s infinite;
+/* ========================================
+   APP CONTAINER
+   ======================================== */
+
+.casino-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: 
+    linear-gradient(45deg, rgba(255,0,64,0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,0,64,0.03) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,0,64,0.03) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,0,64,0.03) 75%),
+    var(--black);
+  background-size: 20px 20px, 20px 20px, 20px 20px, 20px 20px, 100% 100%;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px, 0 0;
 }
 
-.pixel-loader span {
-  font-size: 64px;
-  display: block;
-  margin-bottom: 20px;
-}
+/* ========================================
+   HEADER
+   ======================================== */
 
-.pixel-loader p {
-  color: var(--retro-red);
-  font-size: 20px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* Header */
 .retro-header {
-  background: linear-gradient(180deg, var(--retro-dark) 0%, var(--retro-black) 100%);
-  border-bottom: 4px solid var(--retro-red);
+  background: linear-gradient(180deg, var(--dark) 0%, var(--black) 100%);
+  border-bottom: 4px solid var(--red);
   padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 20px rgba(255, 0, 64, 0.3);
+  flex-wrap: wrap;
+  gap: 15px;
 }
 
 .logo-section {
@@ -86,15 +74,22 @@
 .logo-text h1 {
   font-size: 32px;
   font-weight: 900;
-  margin: 0;
-  color: var(--retro-red);
+  color: var(--red);
   text-transform: uppercase;
   letter-spacing: 6px;
   text-shadow: 
-    3px 3px 0 var(--retro-black),
-    -1px -1px 0 var(--retro-red-light),
+    3px 3px 0 var(--black),
+    -1px -1px 0 var(--red-light),
     4px 4px 0 rgba(255, 0, 64, 0.5);
   position: relative;
+}
+
+.tagline {
+  font-size: 12px;
+  color: var(--gray-light);
+  letter-spacing: 8px;
+  margin-top: 5px;
+  display: block;
 }
 
 /* Glitch Effect */
@@ -116,12 +111,14 @@
   animation: glitch-1 2s infinite linear alternate-reverse;
   color: #0ff;
   z-index: -1;
+  clip-path: inset(0 0 95% 0);
 }
 
 .glitch::after {
   animation: glitch-2 3s infinite linear alternate-reverse;
   color: #f0f;
   z-index: -2;
+  clip-path: inset(95% 0 0 0);
 }
 
 @keyframes glitch-1 {
@@ -140,57 +137,123 @@
   80% { clip-path: inset(5% 0 80% 0); transform: translate(2px, 0); }
 }
 
-.tagline {
-  font-size: 12px;
-  color: var(--retro-gray-light);
-  letter-spacing: 8px;
-  margin-top: 5px;
-  display: block;
+/* ========================================
+   HEADER RIGHT (Wallet + Balance)
+   ======================================== */
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-/* Header Stats */
-.stat-pill {
-  background: var(--retro-black);
-  border: 2px solid var(--retro-red);
+/* Balance Display */
+.balance-display {
+  display: flex;
+  align-items: center;
+}
+
+.balance-box {
+  background: var(--black);
+  border: 3px solid var(--green);
   padding: 10px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 
-    4px 4px 0 rgba(255, 0, 64, 0.3),
-    inset 0 0 10px rgba(255, 0, 64, 0.1);
+    4px 4px 0 rgba(0, 255, 136, 0.3),
+    inset 0 0 20px rgba(0, 255, 136, 0.1);
 }
 
-.stat-label {
+.balance-label {
   font-size: 10px;
-  color: var(--retro-gray-light);
+  color: var(--gray-light);
   letter-spacing: 2px;
 }
 
-.stat-value.mainnet {
-  color: var(--retro-green);
+.balance-amount {
+  font-size: 20px;
+  color: var(--green);
   font-weight: bold;
-  font-size: 14px;
-  text-shadow: 0 0 10px var(--retro-green);
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
 }
 
-/* Navigation */
+.wallet-address {
+  font-size: 10px;
+  color: var(--gray-light);
+  margin-top: 4px;
+}
+
+/* Wallet Button Override */
+.wallet-btn {
+  background: var(--red) !important;
+  border: 3px solid var(--red-dark) !important;
+  color: #fff !important;
+  font-family: 'Courier New', monospace !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 2px !important;
+  padding: 12px 24px !important;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5) !important;
+  transition: all 0.15s !important;
+}
+
+.wallet-btn:hover {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5) !important;
+  background: var(--red-light) !important;
+}
+
+/* Network Pill */
+.network-pill {
+  background: var(--black);
+  border: 2px solid var(--green);
+  color: var(--green);
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.network-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ========================================
+   NAVIGATION
+   ======================================== */
+
 .retro-nav {
   display: flex;
   justify-content: center;
   gap: 10px;
   padding: 20px;
-  background: var(--retro-dark);
-  border-bottom: 2px solid var(--retro-gray);
+  background: var(--dark);
+  border-bottom: 2px solid var(--gray);
   overflow-x: auto;
 }
 
 .pixel-btn {
-  background: var(--retro-black);
-  border: 3px solid var(--retro-gray);
+  background: var(--black);
+  border: 3px solid var(--gray);
   color: #fff;
   padding: 15px 25px;
-  font-family: 'Courier New', monospace;
+  font-family: inherit;
   font-weight: bold;
   font-size: 14px;
   text-transform: uppercase;
@@ -199,26 +262,21 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  transition: all 0.1s;
-  box-shadow: 
-    4px 4px 0 rgba(0, 0, 0, 0.5),
-    inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+  min-width: 100px;
+  transition: all 0.15s;
 }
 
 .pixel-btn:hover {
-  border-color: var(--retro-red);
-  box-shadow: 
-    4px 4px 0 rgba(255, 0, 64, 0.3),
-    inset 0 0 0 2px rgba(255, 0, 64, 0.2);
-  transform: translate(-2px, -2px);
+  border-color: var(--red);
+  transform: translateY(-2px);
 }
 
 .pixel-btn.active {
-  background: var(--retro-red);
-  border-color: var(--retro-red-light);
+  background: var(--red);
+  border-color: var(--red);
   box-shadow: 
-    4px 4px 0 rgba(255, 0, 64, 0.5),
-    inset 0 0 20px rgba(255, 255, 255, 0.2);
+    4px 4px 0 rgba(255, 0, 64, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 .btn-icon {
@@ -226,24 +284,30 @@
 }
 
 .btn-text {
-  letter-spacing: 2px;
   font-size: 12px;
+  letter-spacing: 1px;
 }
 
-/* Game Container */
+/* ========================================
+   GAME CONTAINER
+   ======================================== */
+
 .game-container {
-  padding: 30px 20px;
+  flex: 1;
+  padding: 40px 20px;
   max-width: 800px;
   margin: 0 auto;
+  width: 100%;
 }
 
-/* Footer */
+/* ========================================
+   FOOTER
+   ======================================== */
+
 .retro-footer {
-  background: var(--retro-dark);
-  border-top: 4px solid var(--retro-red);
+  background: var(--dark);
+  border-top: 2px solid var(--gray);
   padding: 20px;
-  text-align: center;
-  margin-top: auto;
 }
 
 .footer-content {
@@ -255,166 +319,43 @@
 }
 
 .footer-logo {
-  color: var(--retro-red);
+  color: var(--red);
   font-weight: bold;
   font-size: 18px;
 }
 
 .footer-text {
-  color: var(--retro-gray-light);
+  color: var(--gray-light);
   font-size: 12px;
   letter-spacing: 2px;
 }
 
 .footer-version {
-  background: var(--retro-black);
-  border: 1px solid var(--retro-red);
-  color: var(--retro-red);
+  background: var(--black);
+  border: 1px solid var(--red);
+  color: var(--red);
   padding: 5px 10px;
   font-size: 10px;
   letter-spacing: 1px;
 }
 
-/* Simple Balance Component */
-.simple-balance {
-  background: var(--retro-black);
-  border: 3px solid var(--retro-green);
-  padding: 10px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 
-    4px 4px 0 rgba(0, 255, 136, 0.3),
-    inset 0 0 20px rgba(0, 255, 136, 0.1);
-}
+/* ========================================
+   RESPONSIVE
+   ======================================== */
 
-.balance-label {
-  font-size: 10px;
-  color: var(--retro-gray-light);
-  letter-spacing: 2px;
-}
-
-.balance-value {
-  font-size: 24px;
-  color: var(--retro-green);
-  font-weight: bold;
-  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
-  font-family: 'Courier New', monospace;
-}
-
-.wallet-addr {
-  font-size: 10px;
-  color: var(--retro-gray-light);
-  margin-top: 5px;
-}
-
-/* Wallet Info Component */
-.wallet-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.wallet-info.connected {
-  flex-direction: row;
-}
-
-.balance-box {
-  background: var(--retro-black);
-  border: 3px solid var(--retro-green);
-  padding: 10px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 
-    4px 4px 0 rgba(0, 255, 136, 0.3),
-    inset 0 0 20px rgba(0, 255, 136, 0.1);
-}
-
-.balance-label {
-  font-size: 10px;
-  color: var(--retro-gray-light);
-  letter-spacing: 2px;
-}
-
-.balance-value {
-  font-size: 20px;
-  color: var(--retro-green);
-  font-weight: bold;
-  text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
-  font-family: 'Courier New', monospace;
-}
-
-.wallet-addr {
-  font-size: 10px;
-  color: var(--retro-gray-light);
-  margin-top: 5px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.network-badge {
-  background: var(--retro-black);
-  border: 2px solid var(--retro-green);
-  color: var(--retro-green);
-  padding: 8px 15px;
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px var(--retro-green);
-}
-
-/* Wallet Button Override */
-.retro-wallet-btn {
-  background: var(--retro-red) !important;
-  border: 3px solid var(--retro-red-dark) !important;
-  color: #fff !important;
-  font-family: 'Courier New', monospace !important;
-  font-weight: bold !important;
-  text-transform: uppercase !important;
-  letter-spacing: 2px !important;
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5) !important;
-  transition: all 0.15s !important;
-}
-
-.retro-wallet-btn:hover {
-  transform: translate(2px, 2px) !important;
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5) !important;
-  background: var(--retro-red-light) !important;
-}
-
-.retro-wallet-btn.small {
-  padding: 8px 15px !important;
-  font-size: 12px !important;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .retro-header {
     flex-direction: column;
-    gap: 15px;
     text-align: center;
   }
   
   .header-right {
     flex-direction: column;
-    gap: 10px;
-  }
-  
-  .wallet-info.connected {
-    flex-direction: column;
+    width: 100%;
   }
   
   .logo-text h1 {
     font-size: 24px;
-  }
-  
-  .retro-nav {
-    padding: 10px;
   }
   
   .pixel-btn {
