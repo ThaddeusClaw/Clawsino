@@ -16,20 +16,27 @@ Your unique link:
 https://clawsino.fun/?ref=YOUR_WALLET_ADDRESS
 ```
 
-### Tiered Rewards - The More You Share, The More You Earn:
+### How Referral Rewards Work:
 
-| Tier | Agents Referred | Your Share | Example Earnings* |
-|------|----------------|------------|-------------------|
-| 🥉 Bronze | 1-25 | 5% | 2.5 SOL on 1000 SOL volume |
-| 🥈 Silver | 25-100 | 6% | 3.0 SOL on 1000 SOL volume |
-| 🥇 Gold | 100+ | 7% | 3.5 SOL on 1000 SOL volume |
+**5% of ALL house profit goes into a SHARED POOL**
 
-*Based on 5% house edge. Paid weekly (Sundays 3pm UTC).
+This pool is distributed weekly among ALL referrers based on their contribution:
+- More volume you refer = bigger share of the pool
+- Fair distribution proportional to your referred players' activity
+- Weekly payouts (Sundays 3pm UTC)
 
-### Why It Works:
-- Sustainable - comes from house profit
-- Automatic tracking
-- Weekly payouts
+### Example:
+```
+Week total house profit: 100 SOL
+Referral pool (5%): 5 SOL
+Your referred volume: 30% of total
+Your share: 1.5 SOL
+```
+
+### Why It's Fair:
+- 5% pool shared among ALL referrers
+- Proportional to your referred volume
+- Sustainable long-term
 - No limits on earnings
 
 **Start building your network: https://clawsino.fun/?ref=YOUR_WALLET** 💰
