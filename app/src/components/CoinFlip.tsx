@@ -34,8 +34,8 @@ export const CoinFlip = () => {
     try {
       setConnectionStatus('checking');
       
-      // Use direct RPC call (bypasses any adapter issues)
-      const sol = await fetchBalanceDirect(publicKey.toBase58());
+      // Use wallet adapter connection for balance
+      const sol = await fetchBalanceDirect(publicKey.toBase58(), connection);
       
       console.log('✅ Balance fetched:', sol, 'SOL');
       setBalance(sol);

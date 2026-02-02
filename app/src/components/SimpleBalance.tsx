@@ -1,47 +1,45 @@
 import { useState, useEffect } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
-
-// Simple balance fetch that ALWAYS uses mainnet
-async function getBalanceFromMainnet(address: string): Promise<number> {
-  try {
-    const response = await fetch('https://api.mainnet-beta.solana.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'getBalance',
-        params: [address]
-      })
-    });
-    
-    const data = await response.json();
-    return (data.result?.value || 0) / 1e9;
-  } catch {
-    return 0;
-  }
-}
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 export function SimpleBalance() {
   const wallet = useWallet();
+  const { connection } = useConnection();
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!wallet.publicKey) {
+    if (!wallet.publicKey || !connection) {
       setBalance(null);
       return;
     }
 
-    const address = wallet.publicKey.toBase58();
     let cancelled = false;
     
     async function fetchBalance() {
       setLoading(true);
-      const bal = await getBalanceFromMainnet(address);
-      if (!cancelled) {
-        setBalance(bal);
-        setLoading(false);
+      setError(null);
+      
+      try {
+        console.log('🔍 Fetching balance via wallet adapter...');
+        const lamports = await connection.getBalance(wallet.publicKey!, 'confirmed');
+        
+        if (!cancelled) {
+          const sol = lamports / LAMPORTS_PER_SOL;
+          console.log('✅ Balance:', sol, 'SOL');
+          setBalance(sol);
+        }
+      } catch (err) {
+        console.error('❌ Balance fetch error:', err);
+        if (!cancelled) {
+          setError('Failed to fetch');
+          setBalance(0);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
@@ -52,7 +50,7 @@ export function SimpleBalance() {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [wallet.publicKey]);
+  }, [wallet.publicKey, connection]);
 
   if (!wallet.connected) {
     return <div className="simple-balance">Connect wallet</div>;
@@ -67,10 +65,11 @@ export function SimpleBalance() {
   return (
     <div className="simple-balance">
       <span className="balance-label">BALANCE:</span>
-      <span className="balance-value">
+      <span className={`balance-value ${error ? 'error' : ''}`}>
         {loading && balance === null ? '...' : `${balance?.toFixed(4) || '0.0000'} SOL`}
       </span>
       <span className="wallet-addr">{shortAddress}</span>
+      {error && <span className="error-hint">⚠️ {error}</span>}
     </div>
   );
 }

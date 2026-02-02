@@ -1,68 +1,25 @@
-// Ultra-robust balance fetching with multiple fallbacks
-// This ensures we ALWAYS get the correct mainnet balance
+// Balance fetching using wallet adapter connection
 
-const MAINNET_RPCS = [
-  'https://api.mainnet-beta.solana.com',
-  'https://solana-api.projectserum.com',
-  'https://rpc.ankr.com/solana',
-];
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
-export async function fetchBalanceDirect(address: string): Promise<number> {
+// Use wallet adapter connection when available
+export async function fetchBalanceDirect(address: string, connection?: Connection): Promise<number> {
   console.log('🔍 Fetching balance for:', address);
   
-  for (const rpcUrl of MAINNET_RPCS) {
+  // Try wallet adapter connection first
+  if (connection) {
     try {
-      console.log('🌐 Trying RPC:', rpcUrl);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
-      const response = await fetch(rpcUrl, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'getBalance',
-          params: [address, { commitment: 'confirmed' }]
-        }),
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) {
-        console.warn(`⚠️ RPC ${rpcUrl} returned ${response.status}`);
-        continue;
-      }
-      
-      const data = await response.json();
-      
-      if (data.error) {
-        console.warn('⚠️ RPC Error:', data.error);
-        continue;
-      }
-      
-      const lamports = data.result?.value;
-      if (typeof lamports !== 'number') {
-        console.warn('⚠️ Invalid response format:', data);
-        continue;
-      }
-      
-      const sol = lamports / 1e9;
-      console.log(`✅ Balance from ${rpcUrl}: ${sol} SOL`);
+      console.log('🌐 Using wallet adapter connection');
+      const lamports = await connection.getBalance(new PublicKey(address), 'confirmed');
+      const sol = lamports / LAMPORTS_PER_SOL;
+      console.log(`✅ Balance: ${sol} SOL`);
       return sol;
-      
     } catch (err) {
-      console.warn(`❌ Failed to fetch from ${rpcUrl}:`, err);
-      continue;
+      console.warn('⚠️ Wallet adapter connection failed:', err);
     }
   }
   
-  console.error('❌ All RPC endpoints failed');
+  console.error('❌ No working connection available');
   return 0;
 }
 
