@@ -10,3 +10,8 @@ test-ledger
 .env
 .env.local
 .env.*.local
+
+# House wallet (NEVER commit this!)
+house-wallet.json
+payout-server-logs/
+bets.log
