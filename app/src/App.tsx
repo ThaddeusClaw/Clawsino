@@ -23,7 +23,7 @@ const GAMES: { id: GameType; name: string; icon: string }[] = [
 function App() {
   const [activeGame, setActiveGame] = useState<GameType>('coinflip');
   
-  const endpoint = useMemo(() => 'http://localhost:8899', []);
+  const endpoint = useMemo(() => 'https://api.mainnet-beta.solana.com', []);
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
 
   const renderGame = () => {
@@ -66,4 +66,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;// Deploy trigger: Mon Feb  2 13:32:52 CET 2026
