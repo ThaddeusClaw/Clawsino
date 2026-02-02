@@ -1,68 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Balance Debug</title>
+    <title>Clawsino - Fixed!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: monospace; background: #0a0a0f; color: #0f0; padding: 20px; }
-        .log { margin: 5px 0; padding: 10px; background: #1a1a2e; border-left: 3px solid #0f0; }
-        .error { border-color: #f00; color: #f00; }
-        input { width: 400px; padding: 10px; font-family: monospace; background: #1a1a2e; color: #0f0; border: 1px solid #0f0; }
-        button { padding: 10px 20px; background: #0f0; color: #000; border: none; cursor: pointer; margin-left: 10px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Courier New', monospace; 
+            background: #0a0a0f; 
+            color: #0f0; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 { 
+            color: #ff0040; 
+            font-size: 2em; 
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0 #000;
+        }
+        .emoji { font-size: 3em; margin: 20px 0; }
+        .box {
+            background: #1a1a2e;
+            border: 2px solid #0f0;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            margin: 20px 0;
+        }
+        .box.red {
+            border-color: #ff0040;
+        }
+        button {
+            background: #ff0040;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-family: inherit;
+            cursor: pointer;
+            margin: 20px 0;
+            box-shadow: 4px 4px 0 #000;
+        }
+        button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+        .step {
+            margin: 15px 0;
+            padding: 10px;
+            background: #0f0;
+            color: #000;
+            text-align: left;
+        }
+        .step span {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        a { color: #0f0; }
     </style>
 </head>
 <body>
-    <h1>🔍 Balance Debug Tool</h1>
-    <input type="text" id="addr" value="8cppQjNBfuxDotmBaiseDNoLwC8TgT2Mz833ujbYUSWJ" placeholder="Wallet address">
-    <button onclick="check()">Check Balance</button>
-    <div id="logs"></div>
-
-    <script>
-        const logs = document.getElementById('logs');
-        function log(msg, err=false) {
-            const d = document.createElement('div');
-            d.className = 'log' + (err ? ' error' : '');
-            d.textContent = new Date().toLocaleTimeString() + ' ' + msg;
-            logs.appendChild(d);
-        }
-
-        async function check() {
-            logs.innerHTML = '';
-            const addr = document.getElementById('addr').value;
-            log('🔍 Checking: ' + addr);
-            
-            try {
-                const res = await fetch('https://api.mainnet-beta.solana.com', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        jsonrpc: '2.0',
-                        id: 1,
-                        method: 'getBalance',
-                        params: [addr]
-                    })
-                });
-                
-                log('✅ HTTP Status: ' + res.status);
-                
-                const data = await res.json();
-                log('📦 Response: ' + JSON.stringify(data, null, 2));
-                
-                if (data.error) {
-                    log('❌ RPC Error: ' + JSON.stringify(data.error), true);
-                    return;
-                }
-                
-                const lamports = data.result?.value;
-                const sol = lamports / 1e9;
-                log('💰 Balance: ' + sol + ' SOL');
-                
-            } catch(e) {
-                log('❌ Error: ' + e.message, true);
-            }
-        }
-        
-        // Auto-check on load
-        check();
-    </script>
+    <h1>🦞 CLAWSINO</h1>
+    <p>Balance Bug Fixed!</p>
+    
+    <div class="emoji">✅</div>
+    
+    <div class="box">
+        <p><strong>Problem:</strong> Solana RPC blocked browser requests (403)</p>
+        <p><strong>Fix:</strong> Using wallet adapter connection now</p>
+    </div>
+    
+    <div class="box red">
+        <h2>⚠️ WICHTIG / IMPORTANT</h2>
+        <p>1. Hard Refresh: <strong>Ctrl+Shift+R</strong> (Windows) oder <strong>Cmd+Shift+R</strong> (Mac)</p>
+        <p>2. Phantom Wallet muss auf <strong>MAINNET</strong> sein!</p>
+        <p>3. Dann Balance sollte korrekt anzeigen</p>
+    </div>
+    
+    <a href="/">
+        <button>🎰 ZURÜCK ZUM CASINO</button>
+    </a>
+    
+    <p style="margin-top: 20px; font-size: 0.8em;">
+        Build: a420732 | Fixed: Wallet Adapter Connection
+    </p>
 </body>
 </html>
