@@ -1,5 +1,10 @@
-import { useState } from 'react';
-import { PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { useState, useEffect, useCallback } from 'react';
+import { 
+  PublicKey, 
+  SystemProgram, 
+  Transaction, 
+  TransactionInstruction
+} from '@solana/web3.js';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import './CoinFlip.css';
 
@@ -7,8 +12,24 @@ const PROGRAM_ID = new PublicKey('2Gj7tzsJUtgsMAQ6kEUzCtyy7t6X2Byy5UPcrSxKCwVG')
 const HOUSE_WALLET = new PublicKey('8cppQjNBfuxDotmBaiseDNoLwC8TgT2Mz833ujbYUSWJ');
 
 // Instruction discriminators
-const INITIALIZE_DISCRIMINATOR = new Uint8Array([175, 175, 109, 31, 13, 152, 155, 237]);
-const FLIP_DISCRIMINATOR = new Uint8Array([24, 243, 78, 161, 192, 246, 102, 103]);
+const INITIALIZE_DISC = new Uint8Array([175, 175, 109, 31, 13, 152, 155, 237]);
+const FLIP_DISC = new Uint8Array([24, 243, 78, 161, 192, 246, 102, 103]);
+
+// Helper to convert number to u64 bytes
+function numberToU64Bytes(num: number): Uint8Array {
+  const arr = new Uint8Array(8);
+  const view = new DataView(arr.buffer);
+  view.setBigUint64(0, BigInt(num), true); // little-endian
+  return arr;
+}
+
+// Helper to concatenate Uint8Arrays
+function concatArrays(a: Uint8Array, b: Uint8Array): Uint8Array {
+  const result = new Uint8Array(a.length + b.length);
+  result.set(a, 0);
+  result.set(b, a.length);
+  return result;
+}
 
 export function CoinFlip() {
   const { publicKey, sendTransaction, connected } = useWallet();
@@ -20,63 +41,10 @@ export function CoinFlip() {
   const [balance, setBalance] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(false);
-
-  // Check if game is initialized
-  const checkGameInitialized = async (): Promise<boolean> => {
-    if (!connection) return false;
-    try {
-      const [gamePda] = PublicKey.findProgramAddressSync([Buffer.from('game')], PROGRAM_ID);
-      const account = await connection.getAccountInfo(gamePda);
-      return account !== null;
-    } catch {
-      return false;
-    }
-  };
-
-  // Initialize game account
-  const initializeGame = async () => {
-    if (!publicKey || !sendTransaction || !connection) {
-      setError('Wallet not connected');
-      return;
-    }
-
-    setIsInitializing(true);
-    setError(null);
-
-    try {
-      // Derive game PDA
-      const [gamePda] = PublicKey.findProgramAddressSync([Buffer.from('game')], PROGRAM_ID);
-      
-      // Create initialize instruction
-      const initData = Buffer.from(INITIALIZE_DISCRIMINATOR);
-      
-      const initIx = new TransactionInstruction({
-        keys: [
-          { pubkey: gamePda, isSigner: true, isWritable: true },
-          { pubkey: HOUSE_WALLET, isSigner: false, isWritable: false },
-          { pubkey: publicKey, isSigner: true, isWritable: true },
-          { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
-        ],
-        programId: PROGRAM_ID,
-        data: initData,
-      });
-
-      const tx = new Transaction().add(initIx);
-      const signature = await sendTransaction(tx, connection);
-      await connection.confirmTransaction(signature, 'confirmed');
-      
-      console.log('Game initialized:', signature);
-      setError(null);
-    } catch (err: any) {
-      console.error('Initialize failed:', err);
-      setError('Failed to initialize game: ' + err.message);
-    } finally {
-      setIsInitializing(false);
-    }
-  };
+  const [gameReady, setGameReady] = useState(false);
 
   // Fetch balance
-  const fetchBalance = async () => {
+  const fetchBalance = useCallback(async () => {
     if (!publicKey || !connection) return;
     try {
       const lamports = await connection.getBalance(publicKey, 'confirmed');
@@ -84,15 +52,87 @@ export function CoinFlip() {
     } catch (err) {
       console.error('Balance fetch failed:', err);
     }
-  };
+  }, [publicKey, connection]);
+
+  // Check if game is initialized
+  const checkGameInitialized = useCallback(async (): Promise<boolean> => {
+    if (!connection) return false;
+    try {
+      const [gamePda] = PublicKey.findProgramAddressSync(
+        [new TextEncoder().encode('game')], 
+        PROGRAM_ID
+      );
+      const account = await connection.getAccountInfo(gamePda);
+      return account !== null;
+    } catch {
+      return false;
+    }
+  }, [connection]);
+
+  // Auto-initialize on connect
+  useEffect(() => {
+    if (!connected || !publicKey || !connection) {
+      setGameReady(false);
+      return;
+    }
+
+    const autoInit = async () => {
+      const isInit = await checkGameInitialized();
+      if (isInit) {
+        setGameReady(true);
+        return;
+      }
+
+      // Auto-initialize
+      setIsInitializing(true);
+      try {
+        const [gamePda] = PublicKey.findProgramAddressSync(
+          [new TextEncoder().encode('game')], 
+          PROGRAM_ID
+        );
+        
+        const initData = INITIALIZE_DISC;
+        
+        const initIx = new TransactionInstruction({
+          keys: [
+            { pubkey: gamePda, isSigner: false, isWritable: true },
+            { pubkey: HOUSE_WALLET, isSigner: false, isWritable: false },
+            { pubkey: publicKey, isSigner: true, isWritable: true },
+            { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+          ],
+          programId: PROGRAM_ID,
+          data: initData as any, // Uint8Array works as Buffer-like
+        });
+
+        const tx = new Transaction().add(initIx);
+        const signature = await sendTransaction(tx, connection);
+        await connection.confirmTransaction(signature, 'confirmed');
+        
+        console.log('Game auto-initialized:', signature);
+        setGameReady(true);
+      } catch (err: any) {
+        console.error('Auto-initialize failed:', err);
+        // Don't show error - user can still try to play
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    autoInit();
+    fetchBalance();
+    const interval = setInterval(fetchBalance, 3000);
+    return () => clearInterval(interval);
+  }, [connected, publicKey, connection, checkGameInitialized, sendTransaction, fetchBalance]);
 
   // Create flip instruction
   const createFlipIx = (player: PublicKey, amount: number) => {
-    const [gamePda] = PublicKey.findProgramAddressSync([Buffer.from('game')], PROGRAM_ID);
+    const [gamePda] = PublicKey.findProgramAddressSync(
+      [new TextEncoder().encode('game')], 
+      PROGRAM_ID
+    );
     const amountLamports = Math.floor(amount * 1e9);
-    const amountBuffer = Buffer.allocUnsafe(8);
-    amountBuffer.writeBigUInt64LE(BigInt(amountLamports), 0);
-    const data = Buffer.concat([FLIP_DISCRIMINATOR, amountBuffer]);
+    const amountBytes = numberToU64Bytes(amountLamports);
+    const data = concatArrays(FLIP_DISC, amountBytes);
 
     return new TransactionInstruction({
       keys: [
@@ -102,7 +142,7 @@ export function CoinFlip() {
         { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       ],
       programId: PROGRAM_ID,
-      data: data,
+      data: data as any,
     });
   };
 
@@ -117,10 +157,8 @@ export function CoinFlip() {
       return;
     }
 
-    // Check if game is initialized
-    const isInitialized = await checkGameInitialized();
-    if (!isInitialized) {
-      setError('Game not initialized. Click "Initialize Game" first.');
+    if (!gameReady) {
+      setError('Game not ready. Please wait for initialization...');
       return;
     }
 
@@ -132,16 +170,14 @@ export function CoinFlip() {
       const signature = await sendTransaction(tx, connection);
       await connection.confirmTransaction(signature, 'confirmed');
 
-      // Check transaction result
       const txInfo = await connection.getTransaction(signature, { commitment: 'confirmed' });
       
       if (txInfo?.meta?.err) {
-        setError('Transaction failed: ' + JSON.stringify(txInfo.meta.err));
+        setError('Transaction failed');
         setFlipping(false);
         return;
       }
 
-      // Parse logs
       let isWin = false;
       if (txInfo?.meta?.logMessages) {
         for (const log of txInfo.meta.logMessages) {
@@ -182,15 +218,11 @@ export function CoinFlip() {
         <strong>{balance.toFixed(4)} SOL</strong>
       </div>
 
-      {/* Initialize Button */}
-      <button
-        className="init-btn"
-        onClick={initializeGame}
-        disabled={isInitializing}
-        style={{marginBottom: '20px', background: '#00ff88', color: '#000'}}
-      >
-        {isInitializing ? '⏳ INITIALIZING...' : '🚀 INITIALIZE GAME'}
-      </button>
+      {/* Status indicator */}
+      <div style={{marginBottom: '15px', color: gameReady ? '#00ff88' : '#ffaa00'}}>
+        {isInitializing ? '⏳ Initializing game...' : 
+         gameReady ? '✅ Game Ready' : '⚠️ Waiting for game...'}
+      </div>
 
       <div className="bet-section">
         <label>BET AMOUNT</label>
@@ -213,9 +245,9 @@ export function CoinFlip() {
       <button
         className={`flip-btn ${flipping ? 'spinning' : ''}`}
         onClick={handleFlip}
-        disabled={flipping || bet > balance}
+        disabled={flipping || bet > balance || !gameReady}
       >
-        {flipping ? '🪙 FLIPPING...' : '🪙 FLIP COIN'}
+        {flipping ? '🪙 FLIPPING...' : gameReady ? '🪙 FLIP COIN' : '⏳ WAIT...'}
       </button>
 
       {result && !flipping && (
