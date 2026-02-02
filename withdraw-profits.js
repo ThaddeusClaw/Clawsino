@@ -2,44 +2,53 @@
 /**
  * Clawsino Profit Withdrawal Tool
  * 
- * Allows authority to withdraw profits from house wallet
- * while keeping minimum balance for operations.
+ * Laedt House Wallet aus 1Password - sicher!
  */
 
 import { Connection, PublicKey, Keypair, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import readline from 'readline';
 
 const RPC_URL = process.env.SOLANA_RPC || 'https://mainnet.helius-rpc.com/?api-key=af5e5d84-6ce2-4eb9-b096-f4754ca84ba3';
-const HOUSE_WALLET_PATH = './house-wallet.json';
-
-// Minimum reserve to keep in house wallet (for payouts)
-const MINIMUM_RESERVE = 0.5 * LAMPORTS_PER_SOL; // 0.5 SOL
+const OP_ITEM_NAME = 'Clawsino House Wallet V2';
+const MINIMUM_RESERVE = 0.5 * LAMPORTS_PER_SOL;
 
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-async function main() {
-  console.log('🦞 Clawsino Profit Withdrawal Tool\n');
-  
-  // Load house wallet
-  let houseKeypair;
+// Load from 1Password
+function loadHouseWallet() {
   try {
-    const walletData = JSON.parse(fs.readFileSync(HOUSE_WALLET_PATH, 'utf8'));
-    houseKeypair = Keypair.fromSecretKey(new Uint8Array(walletData.secretKey));
-    console.log('✅ House wallet loaded:', houseKeypair.publicKey.toBase58());
+    const opPassword = process.env.OP_PASSWORD;
+    if (!opPassword) {
+      throw new Error('OP_PASSWORD environment variable required');
+    }
+    
+    const sessionToken = execSync(`echo "${opPassword}" | op signin --account thaddeus --raw`, { encoding: 'utf8' }).trim();
+    const secretKeyJson = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
+    const secretKey = JSON.parse(secretKeyJson);
+    
+    return Keypair.fromSecretKey(new Uint8Array(secretKey));
   } catch (err) {
-    console.error('❌ Failed to load house wallet:', err.message);
+    console.error('❌ Failed to load from 1Password:', err.message);
     process.exit(1);
   }
+}
+
+async function main() {
+  console.log('🦞 Clawsino Profit Withdrawal Tool\n');
+  console.log('🔐 Loading from 1Password...\n');
   
+  const houseKeypair = loadHouseWallet();
   const connection = new Connection(RPC_URL, 'confirmed');
   
-  // Check balance
+  console.log('✅ House wallet loaded:', houseKeypair.publicKey.toBase58());
+  
   const balance = await connection.getBalance(houseKeypair.publicKey);
-  console.log('\n💰 House Wallet Status:');
+  console.log(`\n💰 House Wallet Status:`);
   console.log(`   Balance: ${(balance / LAMPORTS_PER_SOL).toFixed(4)} SOL`);
   console.log(`   Minimum Reserve: ${(MINIMUM_RESERVE / LAMPORTS_PER_SOL)} SOL`);
   
@@ -51,7 +60,6 @@ async function main() {
     process.exit(0);
   }
   
-  // Ask for withdrawal details
   console.log('\n📤 Withdrawal Options:');
   console.log('1. Withdraw all available profits');
   console.log('2. Withdraw custom amount');
@@ -85,7 +93,6 @@ async function main() {
       return;
     }
     
-    // Ask for destination
     const destinationAddress = await new Promise(resolve => {
       rl.question('\nEnter destination wallet address: ', resolve);
     });
@@ -99,7 +106,6 @@ async function main() {
       return;
     }
     
-    // Confirm withdrawal
     console.log('\n📋 Withdrawal Summary:');
     console.log(`   From: ${houseKeypair.publicKey.toBase58()}`);
     console.log(`   To: ${destinationAddress}`);
@@ -115,7 +121,6 @@ async function main() {
       return;
     }
     
-    // Execute withdrawal
     try {
       console.log('\n🚀 Executing withdrawal...');
       
@@ -134,7 +139,6 @@ async function main() {
       console.log(`   Transaction: ${signature}`);
       console.log(`   Explorer: https://solscan.io/tx/${signature}`);
       
-      // Log withdrawal
       const logEntry = {
         timestamp: new Date().toISOString(),
         type: 'WITHDRAWAL',

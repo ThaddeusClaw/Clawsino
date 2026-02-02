@@ -2,37 +2,63 @@
 /**
  * Clawsino Auto-Payout Server
  * 
- * Monitors House Wallet for incoming bets and automatically processes payouts
- * based on provably fair randomness.
+ * Laedt House Wallet aus 1Password - nie im Code speichern!
+ * 
+ * Setup:
+ * 1. Stelle sicher dass 1Password CLI installiert ist
+ * 2. House Wallet muss in 1Password existieren als "Clawsino House Wallet V2"
+ * 3. Starte: OP_PASSWORD=dein_passwort node payout-server.js
  */
 
 import { Connection, PublicKey, Keypair, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { execSync } from 'child_process';
 import fs from 'fs';
-import path from 'path';
 
 // Configuration
-const RPC_URL = process.env.SOLANA_RPC || 'https://mainnet.helius-rpc.com/?api-key=YOUR_KEY';
-const HOUSE_WALLET_PATH = process.env.HOUSE_WALLET_PATH || './house-wallet.json';
-const MIN_BET = 0.001; // SOL
-const MAX_BET = 0.1;   // SOL
-const HOUSE_EDGE = 0.02; // 2%
+const RPC_URL = process.env.SOLANA_RPC || 'https://mainnet.helius-rpc.com/?api-key=af5e5d84-6ce2-4eb9-b096-f4754ca84ba3';
+const OP_ITEM_NAME = 'Clawsino House Wallet V2';
+const MIN_BET = 0.001;
+const MAX_BET = 0.1;
 
-// Load house wallet
-let houseKeypair;
-try {
-  const secretKey = JSON.parse(fs.readFileSync(HOUSE_WALLET_PATH, 'utf8'));
-  houseKeypair = Keypair.fromSecretKey(new Uint8Array(secretKey));
-  console.log('✅ House wallet loaded:', houseKeypair.publicKey.toBase58());
-} catch (err) {
-  console.error('❌ Failed to load house wallet:', err.message);
-  console.log('Creating new house wallet...');
-  houseKeypair = Keypair.generate();
-  fs.writeFileSync(HOUSE_WALLET_PATH, JSON.stringify(Array.from(houseKeypair.secretKey)));
-  console.log('✅ New house wallet created:', houseKeypair.publicKey.toBase58());
-  console.log('⚠️  FUND THIS WALLET BEFORE STARTING!');
-  process.exit(1);
+// Load house wallet from 1Password
+function loadHouseWallet() {
+  try {
+    // Get from 1Password
+    const opPassword = process.env.OP_PASSWORD;
+    if (!opPassword) {
+      throw new Error('OP_PASSWORD environment variable required');
+    }
+    
+    // Sign in to 1Password
+    const sessionToken = execSync(`echo "${opPassword}" | op signin --account thaddeus --raw`, { encoding: 'utf8' }).trim();
+    
+    // Get public key
+    const publicKey = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field username`, { encoding: 'utf8' }).trim();
+    
+    // Get secret key (password field)
+    const secretKeyJson = execSync(`OP_SESSION_thaddeus="${sessionToken}" op item get "${OP_ITEM_NAME}" --field password --reveal`, { encoding: 'utf8' }).trim();
+    const secretKey = JSON.parse(secretKeyJson);
+    
+    const keypair = Keypair.fromSecretKey(new Uint8Array(secretKey));
+    
+    // Verify
+    if (keypair.publicKey.toBase58() !== publicKey) {
+      throw new Error('Public key mismatch');
+    }
+    
+    console.log('✅ House wallet loaded from 1Password:', publicKey);
+    return keypair;
+  } catch (err) {
+    console.error('❌ Failed to load house wallet from 1Password:', err.message);
+    console.log('\nMake sure:');
+    console.log('1. 1Password CLI is installed: brew install 1password-cli');
+    console.log('2. OP_PASSWORD environment variable is set');
+    console.log(`3. Item "${OP_ITEM_NAME}" exists in 1Password`);
+    process.exit(1);
+  }
 }
 
+const houseKeypair = loadHouseWallet();
 const connection = new Connection(RPC_URL, 'confirmed');
 const processedSignatures = new Set();
 
@@ -45,24 +71,21 @@ function generateRandom(playerKey, slot, timestamp, nonce) {
     Buffer.from(nonce.toString())
   ]);
   
-  // Simple hash
   let hash = 14695981039346656037n;
   for (const byte of data) {
     hash = hash * 1099511628211n;
     hash = hash ^ BigInt(byte);
   }
-  return Number(hash % 1000000n); // 0-999999
+  return Number(hash % 1000000n);
 }
 
-// Check if player won
 function checkWin(playerKey, amount, slot, timestamp) {
-  const random = generateRandom(playerKey, slot, timestamp, Date.now());
-  const winChance = 48; // 48% win rate (2% house edge)
+  const random = generateRandom(playerKey, amount, slot, timestamp, Date.now());
+  const winChance = 48;
   const roll = random % 100;
   return roll < winChance;
 }
 
-// Process a single bet
 async function processBet(signature, playerKey, amount) {
   console.log(`\n🎲 Processing bet: ${amount} SOL from ${playerKey.toBase58().slice(0, 8)}...`);
   
@@ -72,7 +95,6 @@ async function processBet(signature, playerKey, amount) {
   const isWin = checkWin(playerKey, amount, slot, timestamp);
   
   if (isWin) {
-    // Player wins: Send 2x back
     const payout = amount * 2 * LAMPORTS_PER_SOL;
     
     console.log(`🎉 PLAYER WINS! Sending ${amount * 2} SOL payout...`);
@@ -96,13 +118,11 @@ async function processBet(signature, playerKey, amount) {
       return { win: true, payout: 0, error: err.message };
     }
   } else {
-    // Player loses: House keeps it
     console.log(`😢 Player lost ${amount} SOL`);
     return { win: false, amount };
   }
 }
 
-// Monitor house wallet for new bets
 async function monitorHouseWallet() {
   console.log('\n👁️  Monitoring house wallet for bets...');
   console.log(`House: ${houseKeypair.publicKey.toBase58()}`);
@@ -122,7 +142,6 @@ async function monitorHouseWallet() {
       
       if (!tx || !tx.meta) continue;
       
-      // Check if this is an incoming transfer (to house)
       const accountKeys = tx.transaction.message.accountKeys;
       const preBalances = tx.meta.preBalances;
       const postBalances = tx.meta.postBalances;
@@ -131,11 +150,9 @@ async function monitorHouseWallet() {
         if (accountKeys[i].equals(houseKeypair.publicKey)) {
           const change = (postBalances[i] - preBalances[i]) / LAMPORTS_PER_SOL;
           
-          // Incoming transfer (positive change)
           if (change > 0 && change >= MIN_BET && change <= MAX_BET) {
-            // Find sender
             const senderIndex = tx.meta.preBalances.findIndex((pre, idx) => {
-              return postBalances[idx] < pre; // Their balance decreased
+              return postBalances[idx] < pre;
             });
             
             if (senderIndex >= 0) {
@@ -145,10 +162,8 @@ async function monitorHouseWallet() {
               console.log(`   From: ${playerKey.toBase58().slice(0, 12)}...`);
               console.log(`   Amount: ${change} SOL`);
               
-              // Process the bet
               const result = await processBet(sigInfo.signature, playerKey, change);
               
-              // Log result
               const logEntry = {
                 timestamp: new Date().toISOString(),
                 signature: sigInfo.signature,
@@ -172,12 +187,11 @@ async function monitorHouseWallet() {
   }
 }
 
-// Main loop
 async function main() {
   console.log('🦞 Clawsino Auto-Payout Server');
   console.log('================================\n');
+  console.log('🔐 Loading wallet from 1Password...\n');
   
-  // Check house balance
   const balance = await connection.getBalance(houseKeypair.publicKey);
   console.log(`House balance: ${balance / LAMPORTS_PER_SOL} SOL`);
   
@@ -187,14 +201,10 @@ async function main() {
   
   console.log('\n🚀 Starting monitoring loop...\n');
   
-  // Run every 5 seconds
   setInterval(monitorHouseWallet, 5000);
-  
-  // Initial check
   await monitorHouseWallet();
 }
 
-// Handle graceful shutdown
 process.on('SIGINT', () => {
   console.log('\n👋 Shutting down...');
   process.exit(0);
