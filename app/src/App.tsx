@@ -21,8 +21,9 @@ const GAMES: { id: GameType; name: string; icon: string }[] = [
   { id: 'slots', name: 'SLOTS', icon: '7️⃣' },
 ];
 
-// CRITICAL: Ensure mainnet connection
-const MAINNET_RPC = 'https://api.mainnet-beta.solana.com';
+// CRITICAL: Use RPC that allows browser requests
+// Ankr provides public Solana RPC with CORS support
+const MAINNET_RPC = 'https://rpc.ankr.com/solana';
 
 function App() {
   const [activeGame, setActiveGame] = useState<GameType>('coinflip');
