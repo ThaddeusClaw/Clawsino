@@ -14,7 +14,10 @@ import { Connection, PublicKey, Keypair, Transaction, SystemProgram, LAMPORTS_PE
 import fs from 'fs';
 
 // Configuration
-const RPC_URL = process.env.SOLANA_RPC || 'https://mainnet.helius-rpc.com/?api-key=YOUR_KEY';
+const HELIUS_API_KEY = process.env.HELIUS_API_KEY;
+const RPC_URL = HELIUS_API_KEY 
+  ? `https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`
+  : process.env.SOLANA_RPC || 'https://api.mainnet-beta.solana.com';
 const HOUSE_WALLET_KEY = process.env.HOUSE_WALLET_KEY;
 const MIN_BET = 0.001;
 const MAX_BET = 0.1;
@@ -172,6 +175,12 @@ async function monitorHouseWallet() {
 async function main() {
   console.log('🦞 Clawsino Auto-Payout Server');
   console.log('================================\n');
+  
+  if (!HELIUS_API_KEY) {
+    console.warn('⚠️  HELIUS_API_KEY not set - using fallback RPC');
+    console.warn('   Set HELIUS_API_KEY in Cloudflare for better reliability\n');
+  }
+  
   console.log('🔐 Loading wallet from Cloudflare Secrets...\n');
   
   const balance = await connection.getBalance(houseKeypair.publicKey);

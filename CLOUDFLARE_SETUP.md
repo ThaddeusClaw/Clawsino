@@ -44,9 +44,11 @@ Füge hinzu:
 | Variable Name | Value | Environment |
 |---------------|-------|-------------|
 | `HOUSE_WALLET_KEY` | `H9t9u1TBujMyWTfbZo45t6WBhuUE+n2bXBXQSezKe2bz6bkelW56/mcFMzlYMj/pPIwe14GrUXK2eWai0vlTRQ==` | Production |
-| `SOLANA_RPC` | `https://mainnet.helius-rpc.com/?api-key=af5e5d84-6ce2-4eb9-b096-f4754ca84ba3` | Production |
+| `HELIUS_API_KEY` | `af5e5d84-6ce2-4eb9-b096-f4754ca84ba3` | Production |
 
-⚠️ **WICHTIG:** `HOUSE_WALLET_KEY` ist der Base64-encoded private key!
+⚠️ **WICHTIG:** 
+- `HOUSE_WALLET_KEY` = Base64-encoded private key
+- `HELIUS_API_KEY` = Nur der Key, nicht die volle URL!
 
 ### 2.3 Save & Deploy
 
